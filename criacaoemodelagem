@@ -1,0 +1,71 @@
+CREATE DATABASE LojaKM;
+
+USE LojaKM
+
+-- Users
+CREATE TABLE Usuarios (
+    UserID INT PRIMARY KEY IDENTITY(1,1),
+    NomeUsuario VARCHAR(50) NOT NULL,
+    Senha VARCHAR(100) NOT NULL,
+    Funcao VARCHAR(50)
+);
+
+-- Pessoas Fisica e Juridica
+CREATE TABLE Pessoas (
+    PessoaID INT PRIMARY KEY IDENTITY(1,1),
+    Nome VARCHAR(100) NOT NULL,
+    TipoPessoa VARCHAR(20) CHECK (TipoPessoa IN ('Física', 'Jurídica')) NOT NULL,
+    CPF VARCHAR(14),
+    CNPJ VARCHAR(18),
+    Endereco VARCHAR(255),
+    Telefone VARCHAR(20)
+);
+
+-- Prod
+CREATE TABLE Produtos (
+    ProdutoID INT PRIMARY KEY IDENTITY(1,1),
+    NomeProduto VARCHAR(100) NOT NULL,
+    QuantidadeEmEstoque INT NOT NULL,
+    PrecoVenda DECIMAL(10, 2) NOT NULL
+);
+
+-- Mov
+CREATE TABLE Movimentos (
+    MovimentoID INT PRIMARY KEY IDENTITY(1,1),
+    UsuarioID INT NOT NULL,
+    ProdutoID INT NOT NULL,
+    TipoMovimento VARCHAR(20) CHECK (TipoMovimento IN ('Compra', 'Venda')) NOT NULL,
+    Quantidade INT NOT NULL,
+    PrecoUnitario DECIMAL(10, 2) NOT NULL,
+    DataMovimento DATETIME NOT NULL,
+    FOREIGN KEY (UsuarioID) REFERENCES Usuarios(UserID),
+    FOREIGN KEY (ProdutoID) REFERENCES Produtos(ProdutoID)
+);
+
+
+----  Seq. Péssoa
+USE LojaKM;
+
+CREATE SEQUENCE SequenciaPessoa
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    NO CYCLE;
+
+---Criar dados inserção de dados tester com a seq 
+
+USE LojaKM;
+--- fisica 
+INSERT INTO Pessoas (Nome, TipoPessoa, CPF, CNPJ, Endereco, Telefone)
+VALUES ('Keven', 'Física', '123.456.789-77', NULL, 'Rua Um , 123', '(31) 1234-5678');
+
+-- 
+DECLARE @NovoID INT;
+SET @NovoID = NEXT VALUE FOR SequenciaPessoa;
+
+-- juridica
+INSERT INTO Pessoas (Nome, TipoPessoa, CPF, CNPJ, Endereco, Telefone)
+VALUES ('Empresa KM', 'Jurídica', NULL, '12.345.678/0001-00', 'Avenida Dois, 456', '(31) 9999-9999');
+
+
+--
